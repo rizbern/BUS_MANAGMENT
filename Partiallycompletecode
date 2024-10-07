@@ -1,0 +1,188 @@
+#include<iostream>
+#include<conio.h>
+#include<string>
+using namespace std;
+class Passenger {
+protected:
+	string fname;
+	string lname;
+	int age;
+	long int phone;
+public:
+	void getdata() {
+		cout << "Enter your first name";
+		cin >> fname;
+		cout << "Enter your last name";
+		cin >> lname;
+		cout << "Enter your age";
+		cin >> age;
+		cout << "Enter Phone number";
+		cin >> phone;
+	}
+	void displayData() {
+		cout << "Passenger Name:"<<fname << " " << lname << endl;
+		cout << age;
+	}
+};
+
+class Tickets :public Passenger{
+protected:
+	int time;
+	string from, to;
+public: 
+	void ticket() {
+		cout << "BUS TICKETS\n";
+		
+	}
+	void From() {
+		int choice;
+		cout << "Enter Boarding Point";
+		cout << "1.Popular Cities\n2.Enter your own City\n";
+		cin >> choice;
+			switch (choice)
+			{
+			case 1:
+				cout << "POPULAR CITIES\n";
+				cout << "Mumabi\nPune\nSurat\nAhemdabad\nDelhi\nGoa\nNashik";
+				cin >> from;
+				break;
+			case 2:
+				cout << "Enter boarding point\n";
+				cin >> from;
+				break;
+
+			default:cout << "Select either 1 or 2";
+				break;
+			}
+	}
+	void To() {
+		int choice;
+		cout << "Enter Dropping Point";
+		cout << "1.Popular Cities\n2.Enter your own City\n";
+		cin >> choice;
+			switch (choice)
+			{
+			case 1:
+				cout << "POPULAR CITIES\n";
+				cout << "Mumabi\nPune\nSurat\nAhemdabad\nDelhi\nGoa\nNashik";
+				cin >>to;
+				break;
+			case 2:
+				cout << "Enter dropping point\n";
+				cin>>to;
+				break;
+
+			default:
+				cout << "Select either 1 or 2";
+				break;
+			}
+	}
+};
+
+class AC_seats :public Tickets {
+public:
+	int seat_num[30];
+	char seat_det[30];
+	int count=100;
+	int t;//storing seat number
+public:
+	void display_seats() {
+		cout << "<----------------------SEAT DETAILS----------------------->\n";
+		cout << "A=AVAILABLE\n";
+		cout << "B=BOOKED\n";
+		for (int i = 0;i < 30;i++) {
+			seat_det[i] = 'A';
+			seat_num[i] = count++;
+		}
+		for (int j = 0;j < 30;j++) {
+			cout << seat_num[j] << " ";
+			cout << seat_det[j] << "\t";
+		}
+	}
+	void select_seat() {
+		cout << "Select seat Num\n";
+		cin >> t;
+		seat_det[t] = 'B';
+		cout << "Your seat number is " << 100 + t;
+		for (int i = 0;i < 30;i++) {
+			if (seat_det[t] == 'B') {
+				seat_det[t] = 'B';
+			}
+			else {
+				seat_det[i] = 'A';
+			}
+		}
+		for (int j = 0;j < 30;j++) {
+			cout << seat_num[j] << " ";
+			cout << seat_det[j] << "\t";
+		}
+	}
+};
+class NONAC:public Tickets{
+public:
+	int seat_num[30];
+	char seat_det[30];
+	int count = 100;
+	int t;//storing seat number
+public:
+	void display_seats() {
+		cout << "<----------------------SEAT DETAILS----------------------->\n";
+		cout << "A=AVAILABLE\n";
+		cout << "B=BOOKED\n";
+		for (int i = 0;i < 30;i++) {
+			seat_det[i] = 'A';
+			seat_num[i] = count++;
+		}
+		for (int j = 0;j < 30;j++) {
+			cout << seat_num[j] << " ";
+			cout << seat_det[j] << "\t";
+		}
+	}
+	void select_seat() {
+		cout << "Select seat Num\n";
+		cin >> t;
+		seat_det[t] = 'B';
+		cout << "Your seat number is " << 100 + t;
+		for (int i = 0;i < 30;i++) {
+			if (seat_det[t] == 'B') {
+				seat_det[t] = 'B';
+			}
+			else {
+				seat_det[i] = 'A';
+			}
+		}
+		for (int j = 0;j < 30;j++) {
+			cout << seat_num[j] << " ";
+			cout << seat_det[j] << "\t";
+		}
+	}
+};
+class payment :public  AC_seats, public NONAC {
+protected:
+	int total;
+public:
+
+};
+void main() {
+	int acdet;//to store whether ac or nonac
+	Passenger p;
+	p.getdata();
+	cout << "Select 1 for AC and 2 for NON-AC";
+	cin >> acdet;
+	//p.displayData();
+	//Tickets t;
+	//t.ticket();
+	//t.From();
+	//t.To();
+	if (acdet == 1) {
+		AC_seats a;
+		a.display_seats();
+		a.select_seat();
+	}
+	else if(acdet == 2) {
+		NONAC nc;
+		nc.display_seats();
+		nc.select_seat();
+	}
+	_getch();
+}
