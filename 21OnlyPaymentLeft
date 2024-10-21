@@ -1,0 +1,239 @@
+#include<iostream>
+#include<conio.h>
+#include<string>
+#include<random>
+using namespace std;
+class Passenger {
+protected:
+	string fname;
+	string lname;
+	int age;
+	int cage;
+	long int phone;
+public:
+	void getdata() {
+		cout << "Enter your first name";
+		cin >> fname;
+		cout << "Enter your last name";
+		cin >> lname;
+		cout << "Enter your age";
+		if (age < 10)
+			cin >> cage;
+		else if (age>10)
+			cin >> age;
+		cout << "Enter Phone number";
+		cin >> phone;
+		system("CLS");
+		cout << "\n-----------------BUS TICKETS======================\n";
+	}
+	void displayData_A() {
+		cout << "Passenger Name:" << fname << " " << lname << endl;
+		cout << age;
+	}
+	void displayData_C() {
+		cout << "Passenger Name:" << fname << " " << lname << endl;
+		cout << cage;
+	}
+};
+
+class Tickets :public Passenger {
+protected:
+	int time;
+	string board, drop;
+	string temp;
+public:
+
+	void From() {
+		cout << "Select Boarding Point\n";
+		cout << "1. Goa\n2. Mumbai\n3. Nashik\n4. Delhi\n";
+		cin >> temp;
+
+		try {
+			if (temp != "Goa" && temp != "Mumbai" && temp != "Nashik" && temp != "Delhi") {
+				throw temp;
+			}
+			else {
+				board = temp; 
+			}
+		}
+		catch (string) {
+			cout << "\nBus from this location is not available\n";
+			From(); 
+		}
+	}
+	void To() {
+		cout << "Select Dropping Point\n";
+		cout << "1. Goa\n2. Mumbai\n3. Nashik\n4. Delhi\n";
+		cin >> temp;
+
+		if (board == temp) {
+			cout << "\nBoarding point and dropping point cannot be same\n";
+			To();
+		}
+
+
+
+		try {
+			if (temp != "Goa" && temp != "Mumbai" && temp != "Nashik" && temp != "Delhi") {
+				throw temp;
+			}
+			else {
+				drop = temp;
+			}
+		}
+		catch (string) {
+			cout << "\nBus from this location is not available\n";
+			To();
+		}
+	}
+	void price() {
+		cout << " Buses from " << board << " to " << drop << endl;
+		cout << rand() % 801 + 700;
+	}
+};
+
+class AC :virtual public Tickets {
+public:
+	int seat_num[30];
+	char seat_det[30];
+	int count = 100;
+	int t;//storing seat number
+	int st;//to select passenger num
+public:
+	void AC_f() {
+		cout << "<----------------------SEAT DETAILS----------------------->\n";
+		cout << "A=AVAILABLE\n";
+		cout << "B=BOOKED\n";
+		for (int i = 0;i < 30;i++) {
+			seat_det[i] = 'A';
+			seat_num[i] = count++;
+		}
+		for (int j = 0;j < 30;j++) {
+			cout << seat_num[j] << " ";
+			cout << seat_det[j] << "\t";
+		}
+	}
+	void select_seats() {
+		cout << "How many seats do you want\n";
+		cin >> st;
+		cout << "\nSelect seat Numbers\n";
+		for (int k = 0;k < st;k++) {
+			cin >> t;
+			try {
+				if (t >= 30) {
+					throw(t);
+				}
+				else {
+					seat_det[t] = 'B';
+					cout << "Your seat number is " << 100 + t << endl;
+					for (int i = 0;i < 30;i++) {
+						if (seat_det[t] == 'B') {
+							seat_det[t] = 'B';
+						}
+						else {
+							seat_det[i] = 'A';
+						}
+					}
+				}
+			}
+			catch (int) {
+				cout << "Bus capacity is only 29 seats";
+				select_seats();
+			}
+		}
+		for (int j = 0;j < 30;j++) {
+			cout << seat_num[j] << " ";
+			cout << seat_det[j] << "\t";
+		}
+	//	system("CLS");
+	}
+};
+class NONAC : virtual public Tickets {
+protected:
+	int seat_num[30];
+	char seat_det[30];
+	int count = 100;
+	int t;//storing seat number
+	int st;//to select passenger num5
+public:
+	void NONAC_f() {
+		cout << "<----------------------SEAT DETAILS----------------------->\n";
+		cout << "A=AVAILABLE\n";
+		cout << "B=BOOKED\n";
+		for (int i = 0;i < 30;i++) {
+			seat_det[i] = 'A';
+			seat_num[i] = count++;
+		}
+		for (int j = 0;j < 30;j++) {
+			cout << seat_num[j] << " ";
+			cout << seat_det[j] << "\t";
+		}
+	}
+	void select_seats() {
+		cout << "How many seats do you want\n";
+		cin >> st;
+		cout << "\nSelect seat Numbers (1-29)\n";
+		for (int k = 0;k < st;k++) {
+			cin >> t;
+			try {
+				if (t >= 30) {
+					throw(t);
+				}
+				else {
+					seat_det[t] = 'B';
+					cout << "Your seat number is " << 100 + t << endl;
+					for (int i = 0;i < 30;i++) {
+						if (seat_det[t] == 'B') {
+							seat_det[t] = 'B';
+						}
+						else {
+							seat_det[i] = 'A';
+						}
+					}
+				}
+			}
+			catch (int) {
+				cout << "Bus capacity is only 29 seats";
+				select_seats();
+			}
+		}
+		for (int j = 0;j < 30;j++) {
+			cout << seat_num[j] << " ";
+			cout << seat_det[j] << "\t";
+		}
+	//	system("CLS");
+	}
+};
+template <class ct,class at>
+class payment :public  AC, public NONAC {
+protected:
+	int total;
+public:
+	inline float calctotal() {
+		
+	}
+};
+void main() {
+	//int choice;//to store whether ac or nonac
+	//Passenger p;
+	//p.getdata();
+	//cout << "Select 1 for AC and 2 for NON-AC";
+	//cin >> choice;
+	/*	switch(choice) {
+		case 1:
+			break;
+		case 2:
+			NONAC ncb;
+			ncb.select_seats();
+			break;
+		default:
+			cout << "Invalid choice!\nChoose again\n";
+			break;
+	}
+	*/
+	Tickets t;
+	t.From();
+	t.To();
+	t.price();
+	_getch();
+}
