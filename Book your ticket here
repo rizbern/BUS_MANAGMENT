@@ -1,0 +1,405 @@
+#include <iostream>
+#include <string>
+#include <fstream> 
+#include <cstdlib> 
+#include <time.h>
+#include<iomanip>
+using namespace std;
+
+class Confirmation;
+
+class Passenger {
+public:
+	string fname;
+	string lname;
+	long long int age;
+	long long int phone;
+
+	void getdata() {
+		cout << "-----Generate your bus ticket here!----\n";
+		cout << "Enter your first name: ";
+		cin >> fname;
+		cout << "Enter your last name: ";
+		cin >> lname;
+		cout << "Enter your age: ";
+		cin >> age;
+		while (age < 0 || age>110) {
+			cout << "Invalid age! Please enter a valid age.\n";
+			cin >> age;
+		}
+		cout << "Enter Phone number: ";
+		cin >> phone;
+		while (phone > 9999999999 || phone < 1000000000) {
+			cout << "Please enter a valid phone number.\n";
+			cin >> phone;
+		}
+	}
+	void displayData() {
+		cout << left << setw(20) << "Passenger Name: " << fname << " " << lname << endl;
+		cout << left << setw(20) << "Age: " << age << endl;
+		cout << left << setw(20) << "Phone No: " << phone << endl;
+	}
+
+	friend class Confirmation;
+};
+
+class Tickets : public Passenger {
+protected:
+	string board, drop;
+	int rand1 = rand() % 2896 + 967;
+	int rand2 = rand() % 3000 + 732;
+	int rand3 = rand() % 3000 + 992;
+
+public:
+	string From() {
+		cout << "\nSelect Boarding Point\n";
+		cout << "1. Goa\n2. Mumbai\n3. Nashik\n4. Pune\n";
+		cout << "(First letter should be capital)\n";
+		cin >> board;
+
+		while (board != "Goa" && board != "Mumbai" && board != "Nashik" && board != "Pune") {
+			cout << "\nBus from this location is not available. Choose again.\n";
+			cin >> board;
+		}
+		return board;
+	}
+
+	string To() {
+		cout << "\nSelect Dropping Point\n";
+		cout << "(First letter should be capital)\n";
+		cin >> drop;
+
+		while (drop == board || (drop != "Goa" && drop != "Mumbai" && drop != "Nashik" && drop != "Pune")) {
+			if (drop == board) {
+				cout << "\nBoarding point and dropping point cannot be the same. Choose again.\n";
+			}
+			else {
+				cout << "\nBus from this location is not available. Choose again.\n";
+			}
+			cin >> drop;
+		}
+		return drop;
+	}
+
+	int availableSeats(string from, string to) {
+		int choice;
+		int pay;
+		cout << "Buses from " << from << " to " << to << " are available...\n";
+		cout << "\nChoose your ticket from Below against the numericals\n";
+		cout << "\n1. From " << from << " to " << to << "\t\tRs." << rand1 << "\n";
+		cout << "Bus timings:\nDeparture from " << from << ": 9:15pm\nExpected Arrival at " << to << ": 7:00am\n\n";
+		cout << "\n2. From " << from << " to " << to << "\t\tRs." << rand2 << "\n";
+		cout << "Bus timings:\nDeparture from " << from << ": 1:15pm\nExpected Arrival at " << to << ": 1:00am\n\n";
+		cout << "\n3. From " << from << " to " << to << "\t\tRs." << rand3 << "\n";
+		cout << "Bus timings:\nDeparture from " << from << ": 9:15am\nExpected Arrival at " << to << ": 5:00pm\n\n";
+		cin >> choice;
+
+		switch (choice) {
+		case 1: pay = rand1; break;
+		case 2: pay = rand2; break;
+		case 3: pay = rand3; break;
+		default:
+			cout << "Invalid choice. Choose again.\n";
+			return availableSeats(from, to);
+		}
+		return pay;
+	}
+};
+
+class Bus {
+public:
+	virtual void select_and_store_seats() = 0;
+};
+
+class AC : public Tickets, public Bus {
+public:
+	int seat_num[30];
+	char seat_det[30];
+	int t;
+	int index[10];
+	int temp = 0;
+	int q = 0;
+
+	int getT(int r) {
+		q = r;
+		return q;
+	}
+
+	void displayac() {
+		cout << "<----------------------SEAT DETAILS----------------------->\n";
+		for (int i = 0; i < 30; i++) {
+			seat_det[i] = 'A';
+			seat_num[i] = i;
+		}
+		for (int j = 0; j < 30; j++) {
+			cout << seat_num[j] << " " << seat_det[j] << "\t";
+		}
+		cout << endl;
+	}
+
+	void select_and_store_seats() override {
+		cout << "\nSelect seat number (0-29)\n";
+		cin >> t;
+
+		try {
+			if (t < 0 || t >= 30) {
+				throw t;
+			}
+			else if (seat_det[t] == 'B') {
+				throw char(t);
+			}
+			else {
+				seat_det[t] = 'B';
+				cout << "Your seat number is " << (100 + t) << endl;
+				temp = getT(t);
+				static int k = 0;
+
+				if (k < 10) {
+					index[k] = temp;
+					k++;
+				}
+
+				for (int i = 0; i < 30; i++) {
+					seat_det[i] = 'A';
+					seat_num[i] = i;
+				}
+				for (int l = 0; l < k; l++) {
+					seat_det[index[l]] = 'B';
+				}
+				for (int j = 0; j < 30; j++) {
+					cout << seat_num[j] << " " << seat_det[j] << "\t";
+				}
+				cout << endl;
+			}
+		}
+		catch (int) {
+			cout << "Invalid seat number. Please choose again.\n";
+			select_and_store_seats();
+		}
+		catch (char) {
+			cout << "Seat number " << (100 + t) << " is already booked. Please choose another seat.\n";
+			select_and_store_seats();
+		}
+
+	}
+};
+
+class NONAC : public Tickets, public Bus {
+public:
+	int seat_num[30];
+	char seat_det[30];
+	int t;
+	int index[10];
+	int temp = 0;
+	int q = 0;
+
+	int getT(int r) {
+		q = r;
+		return q;
+	}
+
+	void displaynonac() {
+		cout << "<----------------------SEAT DETAILS----------------------->\n";
+		for (int i = 0; i < 30; i++) {
+			seat_det[i] = 'A';
+			seat_num[i] = i;
+		}
+		for (int j = 0; j < 30; j++) {
+			cout << seat_num[j] << " " << seat_det[j] << "\t";
+		}
+		cout << endl;
+	}
+
+	void select_and_store_seats() override {
+		cout << "\nSelect seat number (0-29)\n";
+		cin >> t;
+
+		try {
+			if (t < 0 || t >= 30) {
+				throw t;
+			}
+			else if (seat_det[t] == 'B') {
+				throw char(t);
+			}
+			else {
+				seat_det[t] = 'B';
+				cout << "Your seat number is " << (100 + t) << endl;
+				temp = getT(t);
+				static int k = 0;
+
+				if (k < 10) {
+					index[k] = temp;
+					k++;
+				}
+
+				for (int i = 0; i < 30; i++) {
+					seat_det[i] = 'A';
+					seat_num[i] = i;
+				}
+				for (int l = 0; l < k; l++) {
+					seat_det[index[l]] = 'B';
+				}
+				for (int j = 0; j < 30; j++) {
+					cout << seat_num[j] << " " << seat_det[j] << "\t";
+				}
+				cout << endl;
+			}
+		}
+		catch (int) {
+			cout << "Invalid seat number. Please choose again.\n";
+			select_and_store_seats();
+		}
+		catch (char) {
+			cout << "Seat number " << (100 + t) << " is already booked. Please choose another seat.\n";
+			select_and_store_seats();
+		}
+
+	}
+};
+
+template <class T>
+class Payment : public AC {
+public:
+	inline T calctotal(T pay) {
+		cout << "\nAfter adding 18% gst: \t";
+		T gst = pay * (18.0 / 100.0);
+		return pay + gst;
+	}
+};
+
+class Confirmation : public Payment<float> {
+public:
+	int bookedSeatNumber;
+
+	Confirmation() : bookedSeatNumber(-101) {}
+
+	Confirmation(Passenger& passenger, int seat) {
+		fname = passenger.fname;
+		lname = passenger.lname;
+		age = passenger.age;
+		bookedSeatNumber = seat;
+	}
+
+	Confirmation& operator=(Confirmation& other) {
+		if (this != &other) {
+			fname = other.fname;
+			lname = other.lname;
+			age = other.age;
+			bookedSeatNumber = other.bookedSeatNumber;
+		}
+		return *this;
+	}
+
+	void displayConfirmation(string fromR, string toR, float payR) {
+		displayData();
+		cout << "\n<--------------------- TICKET --------------------->\n";
+		cout << left << setw(20) << "Passenger Name: " << fname << " " << lname << endl;
+		cout << left << setw(20) << "Phone No: " << phone << endl;
+		cout << left << setw(20) << "Age: " << age << endl;
+		cout << left << setw(20) << "Boarding Point: " << fromR << endl;
+		cout << left << setw(20) << "Dropping Point: " << toR << endl;
+		cout << left << setw(20) << "Seat Number: " << bookedSeatNumber + 100 << endl;
+		cout << left << setw(20) << "Amount paid after GST: " << payR << endl;
+		cout << "<-------------------------------------------------->\n";
+	}
+};
+
+// Function to save booking information to a file
+void saveToFile(Confirmation& conf, string& from,  string& to, float payment,  string& date) {
+	ofstream file("booking_details.txt", ios::app); // Open file in append mode
+	if (file.is_open()) {
+		file << "Passenger Name: " << conf.fname << " " << conf.lname << endl;
+		file << "Age: " << conf.age << endl;
+		file << "Phone No.: " << conf.phone << endl;
+		file << "Boarding Point: " << from << endl;
+		file << "Dropping Point: " << to << endl;
+		file << "Seat Number: " << (100 + conf.bookedSeatNumber) << endl;
+		file << "Amount paid after GST: " << payment << endl;
+		file << "Date: " << date << endl;
+		file << "----------------------------------------\n";
+		file.close();
+	}
+	else {
+		cout << "Unable to open file for writing!" << endl;
+	}
+}
+
+int main() {
+	Confirmation c[10];
+	int i = 0;
+	float dispayment = 0.0;
+	int choice;
+	string from, to;
+	string date = "6/11/2024";
+	Bus* b;
+	srand(time(0));
+
+	while (true) {
+		
+			c[i].getdata();
+		
+			from = c[i].From();
+			to = c[i].To();
+			dispayment = c[i].availableSeats(from, to);
+			
+			int busChoice;
+			cout << "Select Bus Type:\n1. AC\n2. NON-AC\n";
+			cin >> busChoice;
+			if (busChoice == 1) {
+				AC acBus;
+				b = &acBus;
+				static int check = 0;
+				if (check == 0) {
+					check++;
+					acBus.displayac();
+					b->select_and_store_seats();
+					c[i] = Confirmation(c[i], acBus.t);
+				}
+				else {
+					acBus.select_and_store_seats();
+					c[i] = Confirmation(c[i], acBus.t);
+				}
+			}
+			else if (busChoice == 2) {
+				NONAC ncBus;
+				b = &ncBus;
+				static int check = 0;
+				if (check == 0) {
+					check++;
+					ncBus.displaynonac();
+					b->select_and_store_seats();
+					c[i] = Confirmation(c[i], ncBus.t);
+				}
+				else {
+					ncBus.select_and_store_seats();
+					c[i] = Confirmation(c[i], ncBus.t);
+				}
+			}
+		
+			dispayment = c[i].calctotal(dispayment);
+			cout << "Total payment (after GST): " << dispayment << endl;
+		
+			cout << "\n<--------------------- TICKET --------------------->\n";
+			c[i].displayData();
+			cout << left << setw(20) << "Boarding point: " << from << endl;
+			cout << left << setw(20) << "Dropping point: " << to << endl;
+			cout << left << setw(20) << "Seat Number: " << (100 + c[i].bookedSeatNumber) << endl;
+			cout << left << setw(20) << "Amount paid after GST: " << dispayment << endl;
+			cout << "<-------------------------------------------------->\n";
+			saveToFile(c[i], from, to, dispayment, date);
+		cout<< "1. Select another seat\n"
+			<< "2. Exit\n";
+		cin >> choice;
+		switch(choice){
+		case 1:
+			i++;
+			cout << "You can now enter details for a new passenger or select another bus.\n";
+			continue;
+		case 2:
+			exit(0);
+		default:
+			cout << "Invalid choice. Please try again.\n";
+		}
+	}
+	return 0;
+}
